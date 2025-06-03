@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reddit Image Duplicate Detector | Professional Analysis Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+                <span>Duplicate Detector</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <header class="page-header">
+                <h1>Image Duplicate Analysis</h1>
+                <p class="subtitle">Advanced detection system for finding duplicate images across Reddit communities</p>
+            </header>
+
+            <div class="card main-card">
+                <div class="error-message" id="errorMessage"></div>
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing content...</p>
+                </div>
+
+                <div class="upload-section">
+                    <form id="imageForm">
+                        <div class="input-grid">
+                            <div class="input-group file-input">
+                                <label class="section-label">Upload Image</label>
+                                <div class="upload-zone">
+                                    <input type="file" id="imageFile" name="image" accept="image/*">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" width="24" height="24">
+                                            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                        </svg>
+                                        <span>Choose a file or drag it here</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-separator">
+                                <span>OR</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="section-label">Image URL</label>
+                                <input type="text" id="imageUrl" name="image_url" 
+                                    placeholder="Enter Reddit post URL or direct image URL"
+                                    class="modern-input">
+                            </div>
+
+                            <div class="input-group subreddit-section">
+                                <label class="section-label">Target Subreddits</label>
+                                <div class="subreddit-input-group">
+                                    <input type="text" id="subredditInput" name="subreddit" 
+                                        placeholder="Enter subreddit name" 
+                                        pattern="^[A-Za-z0-9][A-Za-z0-9_]{2,20}$" 
+                                        class="modern-input"
+                                        title="Subreddit name must be 3-21 characters long and contain only letters, numbers, and underscores">
+                                    <button type="button" id="addSubredditBtn" class="add-button">Add</button>
+                                </div>
+                                <div id="selectedSubreddits" class="selected-subreddits">
+                                    <!-- Selected subreddits will appear here -->
+                                </div>
+                            </div>
+
+                            <div id="imagePreview" class="preview-section">
+                                <img id="previewImage" src="" alt="Preview">
+                                <button type="button" id="clearPreview" class="clear-preview">&times;</button>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button type="button" id="confirmSubreddits" class="button secondary" disabled>Confirm Subreddits</button>
+                            <button type="submit" id="checkDuplicates" class="button primary" disabled>Analyze for Duplicates</button>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="progress-track">
+                                <div class="progress-bar">
+                                    <div class="progress"></div>
+                                </div>
+                                <p class="progress-text">Initializing analysis...</p>
+                            </div>
+                            <div class="progress-steps">
+                                <div class="step">
+                                    <div class="step-icon">1</div>
+                                    <span>Download</span>
+                                </div>
+                                <div class="step">
+                                    <div class="step-icon">2</div>
+                                    <span>Process</span>
+                                </div>
+                                <div class="step">
+                                    <div class="step-icon">3</div>
+                                    <span>Search</span>
+                                </div>
+                                <div class="step">
+                                    <div class="step-icon">4</div>
+                                    <span>Analyze</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="results" class="results-section">
+                <div class="card">
+                    <div id="originalPost" class="original-post-container">
+                        <h2 class="section-title">Original Post</h2>
+                    </div>
+                    <div id="duplicatesContainer" class="duplicates-container">
+                        <h2 class="section-title">Detected Duplicates</h2>
+                        <div id="duplicates" class="duplicates-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <template id="postTemplate">
+        <div class="post-card">
+            <div class="post-image-container">
+                <img class="post-image" src="" alt="Reddit post">
+            </div>
+            <div class="post-info">
+                <h3 class="post-title"></h3>
+                <div class="post-metadata">
+                    <span class="post-date"></span>
+                    <span class="post-author"></span>
+                </div>
+                <div class="post-actions">
+                    <a class="button secondary small post-link" target="_blank">View Post</a>
+                    <button class="button danger small report-button">Report Repost</button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

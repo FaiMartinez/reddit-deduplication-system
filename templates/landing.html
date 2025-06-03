@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />    <link rel="stylesheet" href="{{ url_for('static', filename='landing.css') }}" />
+    <title>Image Detection System</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="container__left">        <h1>Track Visual Content Online</h1>
+        <div class="container__btn">
+          <a href="{{ url_for('main') }}" class="btn">TRY OUR SYSTEM</a>
+        </div>
+      </div>
+      <div class="container__right">        <div class="images">
+          <img src="{{ url_for('static', filename='images/duplicate1.jpg') }}" alt="Image Analysis 1" class="tent-1" />
+          <img src="{{ url_for('static', filename='images/duplicate2.jpg') }}" alt="Image Analysis 2" class="tent-2" />
+        </div>
+        <div class="content">
+          <h2>HYBRID IMAGE DETECTION SYSTEM</h2>
+          <h3>How It Works</h3>
+          <p>
+            Our system intelligently detects near-duplicate and reposted images—even after cropping, resizing, 
+            or filters—using a combination of perceptual hashing techniques: aHash, dHash, and pHash.
+            Built with Python, Flask, and ImageHash, it helps protect original content on social media platforms 
+            by identifying reposted or modified images with high accuracy.
+          </p>
+        </div>
+      </div>
+    </div>    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="{{ url_for('static', filename='landing.js') }}"></script>
+  </body>
+</html>
