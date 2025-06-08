@@ -145,7 +145,26 @@ document.getElementById('clearPreview').addEventListener('click', function(e) {
 
 function validateImageUrl(url) {
     try {
-        new URL(url);
+        const urlObj = new URL(url);
+        
+        // Support for various platforms
+        const supportedDomains = [
+            'reddit.com', 'i.redd.it', 'preview.redd.it',
+            'imgur.com', 'i.imgur.com',
+            'gfycat.com',
+            'media.discordapp.net', 'cdn.discordapp.com',
+            'pbs.twimg.com'
+        ];
+        
+        // Check if URL is from a supported domain
+        const isSupported = supportedDomains.some(domain => 
+            urlObj.hostname.includes(domain));
+            
+        if (isSupported) {
+            return true;
+        }
+        
+        // For other domains, check if it's a direct image URL
         return url.match(/\.(jpeg|jpg|gif|png|webp)$/i) != null;
     } catch (e) {
         return false;
