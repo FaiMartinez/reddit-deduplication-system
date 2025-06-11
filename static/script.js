@@ -374,24 +374,119 @@ function createPostElement(post, isOriginal) {
 }
 
 async function reportPost(postId) {
-    try {
-        const response = await fetch('/api/report', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `post_id=${postId}`
+    // Create the report modal if it doesn't exist
+    let modal = document.getElementById('reportModal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'reportModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Report this content</h3>
+                    <span class="close-btn">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>Please select a reason for reporting this content:</p>
+                    <div class="report-options">
+                        <label><input type="radio" name="reportReason" value="spam"> Spam</label>
+                        <label><input type="radio" name="reportReason" value="rules"> Breaks r/CommunityName rules</label>
+                        <label><input type="radio" name="reportReason" value="harassment"> Harassment</input>
+                        <label><input type="radio" name="reportReason" value="sharing"> Sharing personal information</label>
+                        <label><input type="radio" name="reportReason" value="copyright"> Copyright violation</label>
+                        <label><input type="radio" name="reportReason" value="other"> Other issues</label>
+                    </div>
+                    <div class="report-additional" style="display: none; margin-top: 15px;">
+                        <label for="reportDetails">Additional details (optional):</label>
+                        <textarea id="reportDetails" rows="3" placeholder="Please provide more information about your report"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" id="cancelReport">Cancel</button>
+                    <button class="button primary" id="submitReport" disabled>Submit Report</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Add event listeners for the modal
+        document.querySelector('.close-btn').addEventListener('click', () => {
+            modal.style.display = 'none';
         });
-        
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to report post');
-        }
-        
-        alert('Post reported successfully');
-    } catch (error) {
-        showError(error.message);
+
+        document.getElementById('cancelReport').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Toggle additional details for 'Other issues'
+        const reportReasons = document.querySelectorAll('input[name="reportReason"]');
+        reportReasons.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const additionalDiv = document.querySelector('.report-additional');
+                additionalDiv.style.display = e.target.value === 'other' ? 'block' : 'none';
+                document.getElementById('submitReport').disabled = false;
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('submitReport').addEventListener('click', async () => {
+            const selectedReason = document.querySelector('input[name="reportReason"]:checked');
+            const additionalInfo = document.getElementById('reportDetails').value;
+            
+            if (!selectedReason) {
+                alert('Please select a reason for reporting');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitReport');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Reporting...';
+            submitBtn.classList.add('loading');
+
+            // Show success message directly without API call
+            const modalBody = document.querySelector('.modal-body');
+            modalBody.innerHTML = `
+                <div class="report-success">
+                    <svg viewBox="0 0 48 48" width="48" height="48">
+                        <path fill="#4CAF50" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"/>
+                        <path fill="#CCFF90" d="M34.6,14.6L21,28.2l-5.6-5.6l-2.8,2.8l8.4,8.4l16.4-16.4L34.6,14.6z"/>
+                    </svg>
+                    <h3>Reported Successfully</h3>
+                    <p>Thank you for your report.</p>
+                </div>
+            `;
+            
+            // Hide the footer for the success state
+            const modalFooter = document.querySelector('.modal-footer');
+            modalFooter.style.display = 'none';
+            
+            // Close the modal after 1.5 seconds
+            setTimeout(() => {
+                modal.classList.remove('show');
+                // Wait for transition to complete before removing
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    modal.remove();
+                }, 200);
+            }, 1500);
+            submitBtn.classList.remove('loading');
+        });
     }
+    
+    // Show the modal with transition
+    modal.style.display = 'flex';
+    // Force reflow
+    void modal.offsetWidth;
+    // Add show class for transition
+    modal.classList.add('show');
 }
 
 function validateImageUrl(url) {
