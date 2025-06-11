@@ -1,6 +1,104 @@
 // Store selected subreddits
 let selectedSubreddits = new Set();
 
+// Function to handle input changes and show/hide reset buttons
+function setupResetButtons() {
+    // Handle text inputs
+    document.querySelectorAll('.modern-input').forEach(input => {
+        const resetBtn = input.closest('.input-with-reset')?.querySelector('.reset-input') || 
+                       input.closest('.upload-zone')?.querySelector('.reset-input');
+        
+        if (!resetBtn) return;
+        
+        // Initial state
+        resetBtn.style.display = input.value ? 'flex' : 'none';
+        
+        // Handle input events
+        input.addEventListener('input', () => {
+            resetBtn.style.display = input.value ? 'flex' : 'none';
+        });
+        
+        // Handle reset button click
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            input.value = '';
+            resetBtn.style.display = 'none';
+            input.dispatchEvent(new Event('input'));
+            input.focus();
+        });
+    });
+    
+    // Special handling for file input
+    const fileInput = document.getElementById('imageFile');
+    const fileResetBtn = document.querySelector('.upload-zone .reset-input');
+    
+    if (fileInput && fileResetBtn) {
+        fileInput.addEventListener('change', () => {
+            fileResetBtn.style.display = fileInput.files.length > 0 ? 'flex' : 'none';
+        });
+        
+        fileResetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.value = '';
+            fileResetBtn.style.display = 'none';
+            hidePreview();
+        });
+    }
+}
+
+// Function to reset the form and re-enable subreddit input
+function resetForm() {
+    // Clear all inputs
+    document.getElementById('imageForm').reset();
+    
+    // Clear file input and preview
+    document.getElementById('imageFile').value = '';
+    hidePreview();
+    
+    // Clear selected subreddits
+    selectedSubreddits.clear();
+    updateSubredditDisplay();
+    
+    // Re-enable subreddit inputs
+    document.getElementById('subredditInput').disabled = false;
+    document.getElementById('addSubredditBtn').disabled = false;
+    document.getElementById('confirmSubreddits').disabled = false;
+    
+    // Hide the reset button
+    document.getElementById('resetForm').style.display = 'none';
+    
+    // Clear any error messages
+    clearError();
+    
+    // Clear results
+    clearResults();
+    
+    // Reset progress
+    hideProgress();
+    
+    // Re-initialize reset buttons
+    setupResetButtons();
+}
+
+// Initialize reset buttons when the DOM is loaded
+// Initialize the application when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Set up all reset buttons
+    setupResetButtons();
+    
+    // Get the reset button and add click handler
+    const resetButton = document.getElementById('resetForm');
+    if (resetButton) {
+        resetButton.addEventListener('click', resetForm);
+        
+        // Show the reset button if there are already selected subreddits
+        if (selectedSubreddits.size > 0) {
+            resetButton.style.display = 'flex';
+            document.getElementById('checkDuplicates').disabled = false;
+        }
+    }
+});
+
 document.getElementById('addSubredditBtn').addEventListener('click', () => {
     const subredditInput = document.getElementById('subredditInput');
     const subreddit = subredditInput.value.trim();
@@ -42,16 +140,37 @@ function removeSubreddit(subreddit) {
     document.getElementById('checkDuplicates').disabled = true;
 }
 
+// Handle subreddit confirmation
 document.getElementById('confirmSubreddits').addEventListener('click', () => {
     if (selectedSubreddits.size > 0) {
-        document.getElementById('checkDuplicates').disabled = false;
+        const checkDuplicatesBtn = document.getElementById('checkDuplicates');
+        const resetButton = document.getElementById('resetForm');
+        
+        // Enable the analyze button
+        checkDuplicatesBtn.disabled = false;
+        
+        // Disable subreddit input controls
         document.getElementById('subredditInput').disabled = true;
         document.getElementById('addSubredditBtn').disabled = true;
         document.getElementById('confirmSubreddits').disabled = true;
+        
+        // Show the reset button
+        if (resetButton) {
+            resetButton.style.display = 'flex';
+            
+            // Force a reflow to ensure the display change is applied
+            void resetButton.offsetHeight;
+            
+            // Add a class for any additional styling if needed
+            resetButton.classList.add('visible');
+        }
     }
 });
 
+// Re-initialize reset buttons after form submission
 document.getElementById('imageForm').addEventListener('submit', async (e) => {
+    // Ensure reset buttons are properly set up
+    setupResetButtons();
     e.preventDefault();
     clearError();
     

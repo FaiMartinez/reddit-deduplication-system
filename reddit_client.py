@@ -23,7 +23,7 @@ class RedditClient:
                 client_id=os.getenv('REDDIT_CLIENT_ID'),
                 client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
                 user_agent=os.getenv('REDDIT_USER_AGENT', 'python:image-deduplication-system:v1.0'),
-                read_only=True  # Explicitly set read-only mode
+                
             )
             # Test authentication
             self.reddit.user.me()

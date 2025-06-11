@@ -13,6 +13,88 @@
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --radius: 0.5rem;
+    --mobile-breakpoint: 768px;
+    --max-image-width: 100%;
+    --max-image-height: 80vh;
+}
+
+/* Image Styles */
+img {
+    max-width: var(--max-image-width);
+    max-height: var(--max-image-height);
+    height: auto;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+/* Preview Section */
+.preview-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius);
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.preview-section img {
+    max-width: 100%;
+    max-height: 400px;
+}
+
+/* Reset Buttons */
+.input-with-reset {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.reset-input {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.reset-input:hover {
+    color: var(--danger-color);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.reset-input:active {
+    transform: scale(0.9);
+}
+
+/* Adjust input padding to make room for reset button */
+.input-with-reset .modern-input {
+    padding-right: 36px;
+    width: 100%;
+}
+
+/* Style for file input reset button */
+.upload-zone {
+    position: relative;
+}
+
+.upload-zone .reset-input {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    z-index: 2;
 }
 
 /* Reset & Base */
@@ -97,6 +179,60 @@ body {
 .subtitle {
     color: var(--text-secondary);
     font-size: 1.125rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.action-buttons-left,
+.action-buttons-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Reset Button Styling */
+#resetForm {
+    background-color: var(--background-color);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s ease;
+    opacity: 1;
+    visibility: visible;
+}
+
+#resetForm.visible {
+    display: flex !important;
+}
+
+#resetForm:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+#resetForm:active {
+    transform: translateY(1px);
+    background-color: #e2e8f0;
+}
+
+#resetForm svg {
+    transition: transform 0.3s ease;
+}
+
+#resetForm:hover svg {
+    transform: rotate(-90deg);
 }
 
 /* Input Styles */
@@ -194,6 +330,7 @@ input[type="file"] {
     transition: all 0.2s;
     border: none;
     font-size: 1rem;
+    min-height: 48px;
 }
 
 .button.primary {
@@ -231,6 +368,12 @@ input[type="file"] {
 .button.small {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
+}
+
+#addSubredditBtn {
+    min-width: 120px;
+    padding: 0.875rem 1.75rem;
+    font-size: 1.1rem;
 }
 
 /* Progress Styles */
@@ -382,26 +525,48 @@ input[type="file"] {
     margin-bottom: 1rem;
 }
 
-/* Responsive Design */
+/* Mobile responsiveness */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
+    }
+    
+    .page-header h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
     }
     
     .card {
         padding: 1.5rem;
     }
     
-    .page-header h1 {
-        font-size: 2rem;
+    .subreddit-input-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    #addSubredditBtn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .subreddit-tag {
+        font-size: 0.9rem;
+        padding: 0.75rem;
     }
     
     .input-grid {
         gap: 1.5rem;
-    }
-    
-    .duplicates-grid {
-        grid-template-columns: 1fr;
     }
 }
 
